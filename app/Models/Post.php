@@ -9,6 +9,9 @@ class Post extends Model
 {
     use HasFactory;
 
+    const OPEN = true;
+    const CLOSED = false;
+
     public function user()
     {
         return $this->belongsTo(User::class);

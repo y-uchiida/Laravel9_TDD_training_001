@@ -18,7 +18,9 @@ class UsersWithPostsSeeder extends Seeder
     {
         User::factory(10)->create()->each(function ($user) {
             // 各ユーザーごとに、1~5件のダミーデータを生成する
-            Post::factory(random_int(1, 5))->create(['user_id' => $user->id]);
+            Post::factory(random_int(1, 5))
+                ->containClosedPosts()
+                ->create(['user_id' => $user->id]);
         });
     }
 }

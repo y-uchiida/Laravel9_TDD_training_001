@@ -9,7 +9,11 @@ class PostListController extends Controller
 {
     public function index()
     {
-        $posts = Post::withCount('comments')->get();
+        $posts = Post::quesry()
+            ->with('user') // N+1対策
+            ->orderByDesc('comments_count')
+            ->withCount('comments')
+            ->get();
 
         return view('index', compact('posts'));
     }

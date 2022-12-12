@@ -4,7 +4,7 @@
     <h1>ブログ一覧</h1>
     <ul>
         @foreach ($posts as $index => $post)
-            <li>{{ $post->title }}(author: {{ $post->user->name }})</li>
+            <li>{{ $post->title }}(author: {{ $post->user->name }}) ({{ $post->comments_count }} comments)</li>
         @endforeach
     </ul>
 @endsection

@@ -5,6 +5,7 @@ namespace Tests\Feature\Http\Controllers;
 use App\Models\Post;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Carbon;
 use Tests\TestCase;
 
 class PostControllerTest extends TestCase
@@ -128,5 +129,28 @@ class PostControllerTest extends TestCase
 
         // 3. 検証
         $response->assertForbidden();
+    }
+
+    /** @test */
+    public function クリスマスメッセージの表示()
+    {
+        // 1. 準備
+        $post = Post::factory()->create();
+
+        // 2. 実行
+        /* Illuminate\Support\Carbon::setTestNow で、テスト処理内での日付状態を指定できる */
+        Carbon::setTestNow('12/24');
+        $response1224 = $this->get("post/$post->id");
+
+        Carbon::setTestNow('12/25');
+        $response1225 = $this->get("post/$post->id");
+
+        Carbon::setTestNow('12/26');
+        $response1226 = $this->get("post/$post->id");
+
+        // 3. 検証
+        $response1224->assertDontSee('メリークリスマス');
+        $response1226->assertDontSee('メリークリスマス');
+        $response1225->assertSee('メリークリスマス');
     }
 }

@@ -11,6 +11,14 @@ class SignupControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // バリデーションエラーのメッセージをテスト用に上書き
+        app()->setLocale('testing');
+    }
+
     /** ランダムな文字列を返す */
     private function randomStr(int $length = 16)
     {
@@ -91,7 +99,7 @@ class SignupControllerTest extends TestCase
             'name' => '',
         ]);
         $response->assertRedirect();
-        $response->assertInvalid(['name' => '必ず指定してください']);
+        $response->assertInvalid(['name' => 'required']);
 
         // name の文字数制限
         $user = $this->generateUserInfoArray();
@@ -107,7 +115,7 @@ class SignupControllerTest extends TestCase
             'name' => str_repeat('a', 21)
         ]);
         $response->assertRedirect();
-        $response->assertInvalid(['name' => '20文字']);
+        $response->assertInvalid(['name' => 'max']);
     }
 
     /** @test */
@@ -119,7 +127,7 @@ class SignupControllerTest extends TestCase
             'email' => '',
         ]);
         $response->assertRedirect();
-        $response->assertInvalid(['email' => '必ず指定してください']);
+        $response->assertInvalid(['email' => 'required']);
 
         // email の形式エラー
         $user = $this->generateUserInfoArray();
@@ -128,7 +136,7 @@ class SignupControllerTest extends TestCase
             'email' => 'aaa@',
         ]);
         $response->assertRedirect();
-        $response->assertInvalid(['email' => '有効なメールアドレス']);
+        $response->assertInvalid(['email' => 'email']);
     }
 
     /** @test */
@@ -143,7 +151,7 @@ class SignupControllerTest extends TestCase
         ]);
 
         $response->assertRedirect();
-        $response->assertInvalid(['email' => 'emailの値は既に存在しています。']);
+        $response->assertInvalid(['email' => 'unique']);
     }
 
     /** @test */
@@ -155,7 +163,7 @@ class SignupControllerTest extends TestCase
             'password' => '',
         ]);
         $response->assertRedirect();
-        $response->assertInvalid(['password' => '必ず指定してください']);
+        $response->assertInvalid(['password' => 'required']);
 
         // password の文字数制限
         $response = $this->post('/signup', [
@@ -163,6 +171,6 @@ class SignupControllerTest extends TestCase
             'password' => '1234567', // 8文字以上
         ]);
         $response->assertRedirect();
-        $response->assertInvalid(['password' => '8文字']);
+        $response->assertInvalid(['password' => 'min']);
     }
 }

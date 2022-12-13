@@ -22,9 +22,11 @@ class SignupController extends Controller
             'email' => ['required', 'email', ValidationRule::unique('users', 'email')],
             'password' => ['required', 'min:8'],
         ]);
-        User::create([
+        $newUser = User::create([
             ...$request->post(),
             'password' => Hash::make($request->post('password'))
         ]);
+
+        auth()->login($newUser);
     }
 }

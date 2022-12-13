@@ -173,4 +173,14 @@ class SignupControllerTest extends TestCase
         $response->assertRedirect();
         $response->assertInvalid(['password' => 'min']);
     }
+
+    /** @test */
+    public function ユーザー登録後に、登録したユーザーで認証されている()
+    {
+        $userInfo = $this->generateUserInfoArray();
+
+        $this->post('/signup', $userInfo);
+        $user = User::firstWhere(['email' => $userInfo['email']]);
+        $this->assertAuthenticatedAs($user);
+    }
 }

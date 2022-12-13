@@ -75,6 +75,14 @@ class SignupControllerTest extends TestCase
     }
 
     /** @test */
+    public function 不正なPostデータの場合はユーザー登録できない_すべて未入力()
+    {
+        $response = $this->post('/signup', []);
+        $response->assertRedirect();
+        $response->assertInvalid();
+    }
+
+    /** @test */
     public function 不正なPostデータの場合はユーザー登録できない_name()
     {
         // name が空の場合

@@ -52,7 +52,7 @@ class SignupControllerTest extends TestCase
         $newUser = $this->generateUserInfoArray();
 
         $response = $this->post('/signup', $newUser);
-        $response->assertOk();
+        $response->assertRedirect('mypage/posts');
 
         $this->assertDatabaseHas(
             User::class,
@@ -69,7 +69,7 @@ class SignupControllerTest extends TestCase
         $newUser = $this->generateUserInfoArray();
 
         $response = $this->post('/signup', $newUser);
-        $response->assertOk();
+        $response->assertRedirect('mypage/posts');
 
         $user = User::firstWhere([
             'name' => $newUser['name'],
@@ -107,7 +107,7 @@ class SignupControllerTest extends TestCase
             ...$user,
             'name' => str_repeat('a', 20),
         ]);
-        $response->assertOk();
+        $response->assertRedirect('mypage/posts');
         $this->assertDatabaseHas(User::class, ['name' => str_repeat('a', 20)]);
 
         $response = $this->post('/signup', [
@@ -182,5 +182,14 @@ class SignupControllerTest extends TestCase
         $this->post('/signup', $userInfo);
         $user = User::firstWhere(['email' => $userInfo['email']]);
         $this->assertAuthenticatedAs($user);
+    }
+
+    /** @test */
+    public function ユーザー登録後に、マイページに遷移する()
+    {
+        $newUser = $this->generateUserInfoArray();
+
+        $response = $this->post('/signup', $newUser);
+        $response->assertRedirect('mypage/posts');
     }
 }

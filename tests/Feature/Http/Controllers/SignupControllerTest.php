@@ -11,6 +11,25 @@ class SignupControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    /** ランダムな文字列を返す */
+    private function randomStr(int $length = 16)
+    {
+        return substr(\base_convert(hash('sha256', uniqid()), 16, 36), 0, $length);
+    }
+
+    /**
+     * ユーザー情報の配列を生成する
+     */
+    private function generateUserInfoArray()
+    {
+        $user = User::factory()->make();
+        return [
+            'name' => $user->name,
+            'email' => $user->email,
+            'password' => $this->randomStr()
+        ];
+    }
+
     /** @test */
     public function ユーザー登録画面にアクセスできる()
     {
@@ -22,37 +41,35 @@ class SignupControllerTest extends TestCase
     /** @test */
     public function Post送信した内容でユーザーが登録される()
     {
-        $name = 'newUser';
-        $email = 'newUser@example.com';
-        $password = 'newUser@example.com';
-
-        $newUser = compact('name', 'email', 'password');
+        $newUser = $this->generateUserInfoArray();
 
         $response = $this->post('/signup', $newUser);
         $response->assertOk();
 
-        $this->assertDatabaseHas(User::class, compact(
-            'name',
-            'email'
-        ));
+        $this->assertDatabaseHas(
+            User::class,
+            [
+                'name' => $newUser['name'],
+                'email' => $newUser['email']
+            ]
+        );
     }
 
     /** @test */
     public function 登録したユーザーのパスワードがハッシュ化して保存されている()
     {
-        $name = 'newUser';
-        $email = 'newUser@example.com';
-        $password = 'newUser@example.com';
-
-        $newUser = compact('name', 'email', 'password');
+        $newUser = $this->generateUserInfoArray();
 
         $response = $this->post('/signup', $newUser);
         $response->assertOk();
 
-        $user = User::firstWhere(compact('name', 'email'));
+        $user = User::firstWhere([
+            'name' => $newUser['name'],
+            'email' => $newUser['email']
+        ]);
 
         $this->assertTrue(
-            Hash::check($password, $user->password),
+            Hash::check($newUser['password'], $user->password),
             'Post送信したパスワードと、DBに保存されたハッシュ値を照合して正しいことを確認'
         );
     }

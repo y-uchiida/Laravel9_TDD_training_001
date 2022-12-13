@@ -75,7 +75,7 @@ class SignupControllerTest extends TestCase
     }
 
     /** @test */
-    public function 不正なPostデータの場合はユーザー登録できない()
+    public function 不正なPostデータの場合はユーザー登録できない_name()
     {
         // name が空の場合
         $response = $this->post('/signup', [
@@ -100,5 +100,41 @@ class SignupControllerTest extends TestCase
         ]);
         $response->assertRedirect();
         $response->assertInvalid(['name' => '20文字']);
+    }
+
+    /** @test */
+    public function 不正なPostデータの場合はユーザー登録できない_email()
+    {
+        // email が空の場合
+        $response = $this->post('/signup', [
+            ...$this->generateUserInfoArray(),
+            'email' => '',
+        ]);
+        $response->assertRedirect();
+        $response->assertInvalid(['email' => '必ず指定してください']);
+
+        // email の形式エラー
+        $user = $this->generateUserInfoArray();
+        $response = $this->post('/signup', [
+            ...$user,
+            'email' => 'aaa@',
+        ]);
+        $response->assertRedirect();
+        $response->assertInvalid(['email' => '有効なメールアドレス']);
+    }
+
+    /** @test */
+    public function すでにユーザー登録されているメールアドレスは登録できない()
+    {
+        $user = User::factory()->create();
+        $email = $user->email;
+
+        $response = $this->post('/signup', [
+            ...$this->generateUserInfoArray(),
+            'email' => $email
+        ]);
+
+        $response->assertRedirect();
+        $response->assertInvalid('email', 'emailの値は既に存在しています。');
     }
 }

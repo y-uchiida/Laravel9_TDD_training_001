@@ -135,6 +135,26 @@ class SignupControllerTest extends TestCase
         ]);
 
         $response->assertRedirect();
-        $response->assertInvalid('email', 'emailの値は既に存在しています。');
+        $response->assertInvalid(['email' => 'emailの値は既に存在しています。']);
+    }
+
+    /** @test */
+    public function 不正なPostデータの場合はユーザー登録できない_password()
+    {
+        // password が空の場合
+        $response = $this->post('/signup', [
+            ...$this->generateUserInfoArray(),
+            'password' => '',
+        ]);
+        $response->assertRedirect();
+        $response->assertInvalid(['password' => '必ず指定してください']);
+
+        // password の文字数制限
+        $response = $this->post('/signup', [
+            ...$this->generateUserInfoArray(),
+            'password' => '1234567', // 8文字以上
+        ]);
+        $response->assertRedirect();
+        $response->assertInvalid(['password' => '8文字']);
     }
 }

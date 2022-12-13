@@ -21,6 +21,7 @@ class CommentFactory extends Factory
             'name' => $this->faker->name(),
             'body' => $this->faker->realText(100),
             'post_id' => Post::factory(), // Post データを作ってそのIDを設定
+            'created_at' => $this->faker->dateTimeBetween('-30days', '-1days'),
         ];
     }
 }

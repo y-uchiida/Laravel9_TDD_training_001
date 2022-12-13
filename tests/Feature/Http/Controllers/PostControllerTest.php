@@ -2,7 +2,9 @@
 
 namespace Tests\Feature\Http\Controllers;
 
+use App\Models\Comment;
 use App\Models\Post;
+use Carbon\Carbon as CarbonCarbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Carbon;
@@ -116,6 +118,26 @@ class PostControllerTest extends TestCase
         $response->assertOk()
             ->assertSee($post->title)
             ->assertSee($post->user->name);
+    }
+
+    /** @test */
+    public function ブログ詳細画面に、コメントが古い順に表示される()
+    {
+        // 1. 準備
+        $post = Post::factory()->create();
+        Comment::factory()->create(['post_id' => $post->id, 'created_at' => Carbon::now()->sub('5 days')]);
+        Comment::factory()->create(['post_id' => $post->id, 'created_at' => Carbon::now()->sub('3 days')]);
+        Comment::factory()->create(['post_id' => $post->id, 'created_at' => Carbon::now()->sub('2 days')]);
+
+        $ordered_comments = $post->comments()->oldest()->select('comments.name')->get()->toArray();
+        $names = array_column($ordered_comments, 'name');
+
+        // 2. 実行
+        $response = $this->get("/post/$post->id");
+
+        // 3. 検証
+        $response->assertOk()
+            ->assertSeeInOrder($names);
     }
 
     /** @test */

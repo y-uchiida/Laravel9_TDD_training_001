@@ -9,7 +9,8 @@ class PostListController extends Controller
 {
     public function index()
     {
-        $posts = Post::quesry()
+        $posts = Post::query()
+            ->onlyOpen()
             ->with('user') // N+1対策
             ->orderByDesc('comments_count')
             ->withCount('comments')

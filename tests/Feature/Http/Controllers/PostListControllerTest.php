@@ -79,4 +79,26 @@ class PostListControllerTest extends TestCase
             '3 comments',
         ]);
     }
+
+    /** @test */
+    public function トップページのブログ一覧で、非公開の記事は表示されない()
+    {
+        // 1. 準備
+        $post_unpublished = Post::factory()->create([
+            'title' => 'closed post',
+            'is_published' => Post::CLOSED,
+        ]);
+
+        $post_published = Post::factory()->create([
+            'title' => 'published post',
+            'is_published' => Post::OPEN,
+        ]);
+
+        // 2. 実行
+        $response = $this->get('/');
+
+        // 3. 検証
+        $response->assertDontSee($post_unpublished->title); // 非公開記事は表示されない
+        $response->assertSee($post_published->title); // 公開記事は表示される
+    }
 }

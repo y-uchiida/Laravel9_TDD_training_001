@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use Brick\Math\BigInteger;
 use Illuminate\Http\Request;
 
-class PostListController extends Controller
+class PostController extends Controller
 {
     public function index()
     {
@@ -17,5 +18,13 @@ class PostListController extends Controller
             ->get();
 
         return view('index', compact('posts'));
+    }
+
+    public function show(Post $post)
+    {
+        if (!$post->is_published) {
+            abort(403);
+        }
+        return view('post.show', compact('post'));
     }
 }

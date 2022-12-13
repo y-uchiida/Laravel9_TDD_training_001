@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class PostListControllerTest extends TestCase
+class PostControllerTest extends TestCase
 {
     // テストでデータベースを使う場合、マイグレーション処理などを行うために必要
     use RefreshDatabase;
@@ -100,5 +100,33 @@ class PostListControllerTest extends TestCase
         // 3. 検証
         $response->assertDontSee($post_unpublished->title); // 非公開記事は表示されない
         $response->assertSee($post_published->title); // 公開記事は表示される
+    }
+
+    /** @test */
+    public function ブログの詳細画面が表示できる()
+    {
+        // 1. 準備
+        $post = Post::factory()->create();
+
+        // 2. 実行
+        $response = $this->get("/post/$post->id");
+
+        // 3. 検証
+        $response->assertOk()
+            ->assertSee($post->title)
+            ->assertSee($post->user->name);
+    }
+
+    /** @test */
+    public function 非公開Postの詳細画面は表示できない()
+    {
+        // 1. 準備
+        $post = Post::factory()->create(['is_published' => Post::CLOSED]);
+
+        // 2. 実行
+        $response = $this->get("post/$post->id");
+
+        // 3. 検証
+        $response->assertForbidden();
     }
 }

@@ -73,4 +73,32 @@ class SignupControllerTest extends TestCase
             'Post送信したパスワードと、DBに保存されたハッシュ値を照合して正しいことを確認'
         );
     }
+
+    /** @test */
+    public function 不正なPostデータの場合はユーザー登録できない()
+    {
+        // name が空の場合
+        $response = $this->post('/signup', [
+            ...$this->generateUserInfoArray(),
+            'name' => '',
+        ]);
+        $response->assertRedirect();
+        $response->assertInvalid(['name' => '必ず指定してください']);
+
+        // name の文字数制限
+        $user = $this->generateUserInfoArray();
+        $response = $this->post('/signup', [
+            ...$user,
+            'name' => str_repeat('a', 20),
+        ]);
+        $response->assertOk();
+        $this->assertDatabaseHas(User::class, ['name' => str_repeat('a', 20)]);
+
+        $response = $this->post('/signup', [
+            ...$user,
+            'name' => str_repeat('a', 21)
+        ]);
+        $response->assertRedirect();
+        $response->assertInvalid(['name' => '20文字']);
+    }
 }

@@ -31,7 +31,8 @@ class PostManageController extends Controller
             ...$request->post(),
             $request->boolean('is_published')
         ]);
-        return redirect()->route('mypage:edit', ['post' => $post->id]);
+        return redirect()->route('mypage:edit', ['post' => $post->id])
+            ->with(['status' => 'ブログを新規追加しました']);
     }
 
     public function edit(Post $post)
@@ -56,7 +57,8 @@ class PostManageController extends Controller
             ...$request->post(),
             'is_published' => $request->boolean('is_published')
         ]);
-        return redirect(route('mypage:edit', ['post' => $post->id]));
+        return redirect(route('mypage:edit', ['post' => $post->id]))
+            ->with(['status' => 'ブログを更新しました']);
     }
 
     public function destroy(Post $post)
@@ -68,6 +70,7 @@ class PostManageController extends Controller
 
         $post->delete();
 
-        return redirect()->route('mypage:posts');
+        return redirect()->route('mypage:posts')
+            ->with(['status' => 'ブログを削除しました']);
     }
 }

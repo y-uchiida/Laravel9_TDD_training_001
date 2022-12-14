@@ -4,7 +4,7 @@
     <a href="/mypage/posts/create">ブログ新規登録</a>
     <hr>
 
-
+    @include('inc.status')
     <table>
         <tr>
             <th>ブログ名</th>

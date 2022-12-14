@@ -80,6 +80,7 @@ class PostManageControllerTest extends TestCase
         $response = $this->post(route('mypage:store'), $publishedPost->getAttributes());
         $storedPost = $this->user->posts()->first();
         $response->assertRedirect(route('mypage:edit', ['post' => $storedPost->id]));
+        $response->assertSessionHas(['status' => 'ブログを新規追加しました']);
 
         $this->assertDatabaseHas(Post::class, $publishedPost->getAttributes());
         $this->assertSame($publishedPost->title, $storedPost->title);
@@ -102,6 +103,7 @@ class PostManageControllerTest extends TestCase
         $response = $this->post(route('mypage:store'), $unpublishedPost->getAttributes());
         $storedPost = $this->user->posts()->first();
         $response->assertRedirect(route('mypage:edit', ['post' => $storedPost->id]));
+        $response->assertSessionHas(['status' => 'ブログを新規追加しました']);
 
         $this->assertDatabaseHas(Post::class, $unpublishedPost->getAttributes());
         $this->assertSame($unpublishedPost->title, $storedPost->title);
@@ -180,6 +182,7 @@ class PostManageControllerTest extends TestCase
             $newContentOfPost->getAttributes()
         );
         $response->assertRedirect($editUrl);
+        $response->assertSessionHas(['status' => 'ブログを更新しました']);
 
         // 内容が更新されていることを確認
         $post->refresh();
@@ -225,6 +228,7 @@ class PostManageControllerTest extends TestCase
         $this->actingAs($this->user);
         $response = $this->delete(route('mypage:delete', ['post' => $post->id]));
         $response->assertRedirect(route('mypage:posts'));
+        $response->assertSessionHas(['status' => 'ブログを削除しました']);
 
         // Post と関連するComment が削除されていることを確認
         $this->assertModelMissing($post);

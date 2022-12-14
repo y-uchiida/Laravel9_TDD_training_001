@@ -11,7 +11,8 @@
         本文：
         <textarea name="body" style="width:600px; height:200px;">{{ old('body') }}</textarea>
         <br>
-        公開する：<label><input type="checkbox" name="status" value="1" {{ old('status') ? 'checked' : '' }}>公開する</label>
+        公開する：<label><input type="checkbox" name="is_published" value="1"
+                {{ old('is_published') ? 'checked' : '' }}>公開する</label>
         <br><br>
         <input type="submit" value="送信する">
     </form>

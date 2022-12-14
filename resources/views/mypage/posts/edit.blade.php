@@ -14,7 +14,7 @@
         本文：
         <textarea name="body" style="width:600px; height:200px;">{{ data_get($data, 'body') }}</textarea>
         <br>
-        公開する：<label><input type="checkbox" name="status" {{ data_get($data, 'status') ? 'checked' : '' }}
+        公開する：<label><input type="checkbox" name="is_published" {{ data_get($data, 'is_published') ? 'checked' : '' }}
                 value="1">公開する</label>
 
         <input type="submit" value="更新する">

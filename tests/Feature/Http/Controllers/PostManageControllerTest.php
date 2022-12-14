@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Http\Controllers;
 
+use App\Models\Comment;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -212,5 +213,37 @@ class PostManageControllerTest extends TestCase
         $this->assertSame($postContent['title'], $post->title);
         $this->assertSame($postContent['body'], $post->body);
         $this->assertEquals($postContent['is_published'], $post->is_published);
+    }
+
+    /** @test */
+    public function ログイン中のユーザーが所有するPostを削除できる()
+    {
+        $post = Post::factory()->create(['user_id' => $this->user->id]);
+        $comment = Comment::factory()->create(['post_id' => $post->id]);
+        $otherPostComment = Comment::factory()->create();
+
+        $this->actingAs($this->user);
+        $response = $this->delete(route('mypage:delete', ['post' => $post->id]));
+        $response->assertRedirect(route('mypage:posts'));
+
+        // Post と関連するComment が削除されていることを確認
+        $this->assertModelMissing($post);
+        $this->assertModelMissing($comment);
+
+        // Post と関連していないコメントは削除されていないことを確認
+        $this->assertModelExists($otherPostComment);
+    }
+
+    /** @test */
+    public function ログイン中のユーザー以外が所有するPostは削除できない()
+    {
+        $post = Post::factory()->create();
+        $this->actingAs($this->user);
+
+        $response = $this->delete(route('mypage:delete', ['post' => $post->id]));
+        $response->assertForbidden();
+
+        // 内容が削除されていないことを確認
+        $this->assertModelExists($post);
     }
 }

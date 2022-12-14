@@ -55,4 +55,16 @@ class PostManageController extends Controller
         $post->update($request->post());
         return redirect(route('mypage:edit', ['post' => $post->id]));
     }
+
+    public function destroy(Post $post)
+    {
+        // TODO: 所有権チェック
+        if (auth()->user()->isNot($post->user)) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
+
+        $post->delete();
+
+        return redirect()->route('mypage:posts');
+    }
 }

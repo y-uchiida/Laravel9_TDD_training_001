@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Http\Controllers;
 
+use App\Http\Middleware\PostShowLimit;
 use App\Models\Comment;
 use App\Models\Post;
 use Carbon\Carbon as CarbonCarbon;
@@ -108,6 +109,9 @@ class PostControllerTest extends TestCase
     /** @test */
     public function ブログの詳細画面が表示できる()
     {
+        // IP制限をつけるMiddlewareの動作を外す
+        $this->withoutMiddleware(PostShowLimit::class);
+
         // 1. 準備
         $post = Post::factory()->create();
 
@@ -123,6 +127,9 @@ class PostControllerTest extends TestCase
     /** @test */
     public function ブログ詳細画面に、コメントが古い順に表示される()
     {
+        // IP制限をつけるMiddlewareの動作を外す
+        $this->withoutMiddleware(PostShowLimit::class);
+
         // 1. 準備
         $post = Post::factory()->create();
         Comment::factory()->create(['post_id' => $post->id, 'created_at' => Carbon::now()->sub('5 days')]);
@@ -143,6 +150,9 @@ class PostControllerTest extends TestCase
     /** @test */
     public function 非公開Postの詳細画面は表示できない()
     {
+        // IP制限をつけるMiddlewareの動作を外す
+        $this->withoutMiddleware(PostShowLimit::class);
+
         // 1. 準備
         $post = Post::factory()->create(['is_published' => Post::CLOSED]);
 
@@ -156,6 +166,9 @@ class PostControllerTest extends TestCase
     /** @test */
     public function クリスマスメッセージの表示()
     {
+        // IP制限をつけるMiddlewareの動作を外す
+        $this->withoutMiddleware(PostShowLimit::class);
+
         // 1. 準備
         $post = Post::factory()->create();
 

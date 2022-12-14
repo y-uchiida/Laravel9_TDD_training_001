@@ -8,15 +8,11 @@ use Tests\TestCase;
 
 class PostManageControllerTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
-    public function test_example()
+    /** @test */
+    public function ユーザー認証済みでなければ、マイページを表示できない()
     {
-        $response = $this->get('/');
-
-        $response->assertStatus(200);
+        // 未ログイン状態の場合はログインページに遷移する
+        $response = $this->get(route('mypage:posts'));
+        $response->assertRedirect(route('login'));
     }
 }

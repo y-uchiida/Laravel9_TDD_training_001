@@ -6,5 +6,8 @@ use Illuminate\Http\Request;
 
 class PostManageController extends Controller
 {
-    //
+    public function index()
+    {
+        return 'mypage';
+    }
 }

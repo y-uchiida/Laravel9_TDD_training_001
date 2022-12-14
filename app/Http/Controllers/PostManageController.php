@@ -52,7 +52,10 @@ class PostManageController extends Controller
             abort(Response::HTTP_FORBIDDEN);
         }
 
-        $post->update($request->post());
+        $post->update([
+            ...$request->post(),
+            'is_published' => $request->boolean('is_published')
+        ]);
         return redirect(route('mypage:edit', ['post' => $post->id]));
     }
 

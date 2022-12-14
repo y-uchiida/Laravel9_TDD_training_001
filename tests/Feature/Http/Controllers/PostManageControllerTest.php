@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Http\Controllers;
 
+use App\Models\Post;
 use App\Models\User;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -38,5 +39,18 @@ class PostManageControllerTest extends TestCase
 
         $response = $this->get(route('mypage:posts'));
         $response->assertOk();
+    }
+
+    /** @test */
+    public function マイページでは自分のPostだけが表示される()
+    {
+        $myPost = Post::factory()->create(['user_id' => $this->user->id]);
+        $anyOnesPost = Post::factory()->create();
+
+        $this->actingAs($this->user);
+        $response = $this->get(route('mypage:posts'));
+        $response->assertOk();
+        $response->assertSee($myPost->title);
+        $response->assertDontSee($anyOnesPost->title);
     }
 }

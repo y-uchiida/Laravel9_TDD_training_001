@@ -8,6 +8,7 @@ class PostManageController extends Controller
 {
     public function index()
     {
-        return 'mypage';
+        $posts = auth()->user()->posts;
+        return view('mypage.posts.index', compact('posts'));
     }
 }

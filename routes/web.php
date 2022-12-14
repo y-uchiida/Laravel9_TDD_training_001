@@ -25,4 +25,9 @@ Route::get('/post/{post}', [PostController::class, 'show'])
 Route::get('/signup', [SignupController::class, 'index']);
 Route::post('/signup', [SignupController::class, 'store']);
 
-Route::get('/mypage/login', [UserLoginController::class, 'index']);
+Route::get('/mypage/login', [UserLoginController::class, 'index'])->name('mypage:login');
+Route::post('/mypage/login', [UserLoginController::class, 'login']);
+
+Route::get('/mypage/posts', function () {
+  return 'mypage/posts';
+})->name('mypage:posts');

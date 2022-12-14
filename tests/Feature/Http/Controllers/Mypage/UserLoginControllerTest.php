@@ -87,7 +87,7 @@ class UserLoginControllerTest extends TestCase
         ]);
 
         $response = $this->post('/mypage/login', [...$userInfo, 'password' => 'wrong_password']);
-        $response->assertRedirect(route('mypage:login'));
+        $response->assertRedirect(route('login'));
 
         $response->assertSessionHasErrors(['auth_fail']);
     }

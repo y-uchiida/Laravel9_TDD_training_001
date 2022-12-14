@@ -12,9 +12,15 @@ class UserLoginControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    /**
+     * @var User
+     */
+    private $user;
+
     protected function setUp(): void
     {
         parent::setUp();
+        $this->user = User::factory()->create();
 
         // バリデーションエラーのメッセージをテスト用に上書き
         app()->setLocale('testing');
@@ -126,5 +132,20 @@ class UserLoginControllerTest extends TestCase
         ]);
         $response->assertRedirect();
         $response->assertInvalid(['password' => 'required']);
+    }
+
+    /** @test */
+    public function ログアウト処理の挙動()
+    {
+        // 1. 準備
+        $this->actingAs($this->user);
+
+        // 2. 処理
+        $response = $this->post(route('logout'));
+
+        // 3. 検証
+        $this->assertGuest();
+        $response->assertRedirect(route('login'));
+        $response->assertSessionHas(['status' => 'ログアウトしました']);
     }
 }

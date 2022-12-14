@@ -36,4 +36,14 @@ class UserLoginController extends Controller
             ['auth_fail' => 'メールアドレスかパスワードが間違っています']
         )->withInput();
     }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerate();
+
+        return redirect()->route('login')->with('status', 'ログアウトしました');
+    }
 }

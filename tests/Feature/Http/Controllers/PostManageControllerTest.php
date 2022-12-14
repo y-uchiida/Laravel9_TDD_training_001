@@ -38,6 +38,8 @@ class PostManageControllerTest extends TestCase
         // 新規投稿画面
         $response = $this->get(route('mypage:create'));
         $response->assertRedirect(route('login'));
+        $response = $this->post(route('mypage:create'));
+        $response->assertRedirect(route('login'));
     }
 
     /** @test */

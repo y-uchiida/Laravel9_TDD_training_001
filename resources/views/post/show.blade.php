@@ -5,6 +5,7 @@
         <div>メリークリスマス！</div>
     @endif
     <h1>{{ $post->title }}</h1>
+    <h2>ランダム文字列に対するモックテスト: {{ $random }} </h2>
     <div>
         {!! nl2br(e($post->body)) !!}
     </div>

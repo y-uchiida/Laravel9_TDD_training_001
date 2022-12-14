@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Utils\SampleClass;
 use App\Models\Post;
 use Brick\Math\BigInteger;
 use Illuminate\Http\Request;
@@ -20,11 +21,12 @@ class PostController extends Controller
         return view('index', compact('posts'));
     }
 
-    public function show(Post $post)
+    public function show(Post $post, SampleClass $sampleClass)
     {
         if (!$post->is_published) {
             abort(403);
         }
-        return view('post.show', compact('post'));
+        $random = $sampleClass->randomStr(10);
+        return view('post.show', compact('post', 'random'));
     }
 }

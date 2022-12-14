@@ -23,7 +23,7 @@ Route::get('/', [PostController::class, 'index']);
 Route::get('/post/{post}', [PostController::class, 'show'])
   ->name('post.show')
   ->whereNumber('post')
-  ->middleware(PostShowLimit::class)
+  //   ->middleware(PostShowLimit::class)
   //
 ;
 

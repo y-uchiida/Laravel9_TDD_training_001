@@ -5,10 +5,13 @@ namespace Tests\Feature\Http\Controllers;
 use App\Http\Middleware\PostShowLimit;
 use App\Models\Comment;
 use App\Models\Post;
+use App\Utils\SampleClass;
 use Carbon\Carbon as CarbonCarbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Carbon;
+use Mockery;
+use Mockery\MockInterface;
 use Tests\TestCase;
 
 class PostControllerTest extends TestCase
@@ -187,5 +190,27 @@ class PostControllerTest extends TestCase
         $response1224->assertDontSee('メリークリスマス');
         $response1226->assertDontSee('メリークリスマス');
         $response1225->assertSee('メリークリスマス');
+    }
+
+    /** @test */
+    public function ランダムに表示される文字列をモックを使ってテストする()
+    {
+        // SampleClassのインスタンスに対するモックを作成する
+        $this->instance(
+            SampleClass::class,
+            Mockery::mock(
+                SampleClass::class,
+                function (MockInterface $mock) {
+                    $mock->shouldReceive('randomStr') // randomStr が呼び出されている
+                        ->once() // 呼び出しは1回
+                        ->with(10) // 引数に 10 を受け取っている
+                        ->andReturn('TEST_STRING'); // 以上の条件を満たす場合は TEST_STRING を返す
+                }
+            )
+        );
+        $post = Post::factory()->create();
+        $response = $this->get(route('post.show', ['post' => $post->id]));
+        $response->assertOk();
+        $response->assertSeeText('TEST_STRING');
     }
 }

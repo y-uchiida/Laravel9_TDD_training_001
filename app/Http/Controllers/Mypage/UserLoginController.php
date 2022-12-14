@@ -32,7 +32,7 @@ class UserLoginController extends Controller
             return redirect()->route('mypage:posts');
         }
         // 認証失敗時はログイン画面に遷移
-        return redirect()->route('mypage:login')->withErrors(
+        return redirect()->route('login')->withErrors(
             ['auth_fail' => 'メールアドレスかパスワードが間違っています']
         )->withInput();
     }

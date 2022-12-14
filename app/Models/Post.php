@@ -9,6 +9,10 @@ class Post extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'title', 'body', 'is_published'
+    ];
+
     const OPEN = true;
     const CLOSED = false;
 

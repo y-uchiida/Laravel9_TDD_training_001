@@ -16,4 +16,19 @@ class PostManageController extends Controller
     {
         return view('mypage.posts.create');
     }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'title' => ['required', 'max:255'],
+            'body' => ['required'],
+            'status' => ['nullable', 'boolean'],
+        ]);
+
+        $post = auth()->user()->posts()->create([
+            ...$request->post(),
+            $request->boolean('is_published')
+        ]);
+        return redirect()->route('mypage:edit', ['id' => $post->id]);
+    }
 }

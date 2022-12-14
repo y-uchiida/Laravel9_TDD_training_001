@@ -34,4 +34,5 @@ Route::get('/mypage/posts/create', [PostManageController::class, 'create'])->mid
 Route::post('/mypage/posts/create', [PostManageController::class, 'store'])->middleware('auth')->name('mypage:store');
 
 Route::get('/mypage/posts/edit/{post}', [PostManageController::class, 'edit'])->middleware('auth')->name('mypage:edit')->whereNumber('post');
+Route::post('/mypage/posts/edit/{post}', [PostManageController::class, 'update'])->middleware('auth')->name('mypage:update')->whereNumber('post');
 Route::get('/mypage/posts', [PostManageController::class, 'index'])->middleware('auth')->name('mypage:posts');

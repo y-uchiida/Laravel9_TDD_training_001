@@ -160,4 +160,57 @@ class PostManageControllerTest extends TestCase
         $response = $this->get(route('mypage:edit', ['post' => $post->id]));
         $response->assertForbidden();
     }
+
+    /** @test */
+    public function ログイン中のユーザーが所有するPostを更新できる()
+    {
+        $post = Post::factory()->create(['user_id' => $this->user->id]);
+        $newContentOfPost = Post::factory()->create([
+            'is_published' => Post::OPEN
+        ]);
+        $editUrl = route('mypage:edit', ['post' => $post->id]);
+        $this->actingAs($this->user);
+
+        $this->get($editUrl)
+            ->assertOK();
+
+        $response = $this->post(
+            route('mypage:update', ['post' => $post->id]),
+            $newContentOfPost->getAttributes()
+        );
+        $response->assertRedirect($editUrl);
+
+        // 内容が更新されていることを確認
+        $post->refresh();
+        $this->assertSame($newContentOfPost->title, $post->title);
+        $this->assertSame($newContentOfPost->body, $post->body);
+        $this->assertEquals($newContentOfPost->is_published, $post->is_published);
+    }
+
+    /** @test */
+    public function ログイン中のユーザー以外が所有するPostは更新できない()
+    {
+        $postContent = [
+            'title' => 'origin tilte',
+            'body' => 'origin content',
+            'is_published' => Post::OPEN,
+        ];
+        $post = Post::factory()->create($postContent);
+        $newContentOfPost = Post::factory()->create([
+            'is_published' => Post::OPEN
+        ]);
+        $this->actingAs($this->user);
+
+        $response = $this->post(
+            route('mypage:update', ['post' => $post->id]),
+            $newContentOfPost->getAttributes()
+        );
+        $response->assertForbidden();
+
+        // 内容が更新されていないことを確認
+        $post->refresh();
+        $this->assertSame($postContent['title'], $post->title);
+        $this->assertSame($postContent['body'], $post->body);
+        $this->assertEquals($postContent['is_published'], $post->is_published);
+    }
 }

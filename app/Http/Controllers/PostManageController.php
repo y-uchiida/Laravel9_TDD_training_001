@@ -45,4 +45,14 @@ class PostManageController extends Controller
 
         return view('mypage.posts.edit', compact('data'));
     }
+
+    public function update(Post $post, Request $request)
+    {
+        if (auth()->user()->isNot($post->user)) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
+
+        $post->update($request->post());
+        return redirect(route('mypage:edit', ['post' => $post->id]));
+    }
 }

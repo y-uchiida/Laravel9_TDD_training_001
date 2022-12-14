@@ -11,4 +11,9 @@ class PostManageController extends Controller
         $posts = auth()->user()->posts;
         return view('mypage.posts.index', compact('posts'));
     }
+
+    public function create()
+    {
+        return view('mypage.posts.create');
+    }
 }

@@ -28,7 +28,12 @@ class PostManageControllerTest extends TestCase
     public function ユーザー認証済みでなければ、マイページを表示できない()
     {
         // 未ログイン状態の場合はログインページに遷移する
+        // マイページトップ(マイブログ一覧)
         $response = $this->get(route('mypage:posts'));
+        $response->assertRedirect(route('login'));
+
+        // 新規投稿画面
+        $response = $this->get(route('mypage:create'));
         $response->assertRedirect(route('login'));
     }
 
@@ -52,5 +57,13 @@ class PostManageControllerTest extends TestCase
         $response->assertOk();
         $response->assertSee($myPost->title);
         $response->assertDontSee($anyOnesPost->title);
+    }
+
+    /** @test */
+    public function ブログ新規投稿画面の挙動()
+    {
+        $this->actingAs($this->user);
+        $response = $this->get(route('mypage:create'));
+        $response->assertOk();
     }
 }

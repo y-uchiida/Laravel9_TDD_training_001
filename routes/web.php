@@ -31,3 +31,4 @@ Route::post('/mypage/login', [UserLoginController::class, 'login']);
 Route::post('/mypage/logout', [UserLoginController::class, 'logout'])->name('logout');
 
 Route::get('/mypage/posts', [PostManageController::class, 'index'])->middleware('auth')->name('mypage:posts');
+Route::get('/mypage/posts/create', [PostManageController::class, 'create'])->middleware('auth')->name('mypage:create');

@@ -28,5 +28,6 @@ Route::post('/signup', [SignupController::class, 'store']);
 
 Route::get('/mypage/login', [UserLoginController::class, 'index'])->name('login');
 Route::post('/mypage/login', [UserLoginController::class, 'login']);
+Route::post('/mypage/logout', [UserLoginController::class, 'logout'])->name('logout');
 
 Route::get('/mypage/posts', [PostManageController::class, 'index'])->middleware('auth')->name('mypage:posts');

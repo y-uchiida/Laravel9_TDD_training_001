@@ -2,6 +2,9 @@
 
 namespace App\Utils;
 
+// Unit テストでの呼び出しでエラーにならないように、クラスを指定する
+use Illuminate\Support\Str;
+
 class SampleClass
 {
   /**
@@ -9,6 +12,6 @@ class SampleClass
    */
   public function randomStr(int $length = 10)
   {
-    return \Str::random($length);
+    return Str::random($length);
   }
 }

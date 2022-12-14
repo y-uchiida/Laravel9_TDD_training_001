@@ -208,6 +208,23 @@ class PostControllerTest extends TestCase
                 }
             )
         );
+
+        // モックの宣言を分解
+        /*
+         * // 1. SampleClassに対するモックを作成
+         * $mock = Mockery::mock(SampleClass::class);
+         *
+         * // 2. モックオブジェクトの動作を定義
+         * $mock->shouldReceive('randomStr')  // randomStr が呼び出されている
+         *     ->once() // 呼び出しは1回
+         *     ->with(10) // 引数に 10 を受け取っている
+         *     ->andReturn('TEST_STRING'); // 以上の条件を満たす場合は TEST_STRING を返す
+         *
+         * // 3. Laravel のサービスコンテナに登録(SampleClass の解決に $mock を返す)
+         * $this->interface(SampleClass::class, $mock);
+         */
+
+
         $post = Post::factory()->create();
         $response = $this->get(route('post.show', ['post' => $post->id]));
         $response->assertOk();

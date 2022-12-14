@@ -78,7 +78,7 @@ class PostManageControllerTest extends TestCase
 
         $response = $this->post(route('mypage:store'), $publishedPost->getAttributes());
         $storedPost = $this->user->posts()->first();
-        $response->assertRedirect(route('mypage:edit', ['id' => $storedPost->id]));
+        $response->assertRedirect(route('mypage:edit', ['post' => $storedPost->id]));
 
         $this->assertDatabaseHas(Post::class, $publishedPost->getAttributes());
         $this->assertSame($publishedPost->title, $storedPost->title);
@@ -100,7 +100,7 @@ class PostManageControllerTest extends TestCase
 
         $response = $this->post(route('mypage:store'), $unpublishedPost->getAttributes());
         $storedPost = $this->user->posts()->first();
-        $response->assertRedirect(route('mypage:edit', ['id' => $storedPost->id]));
+        $response->assertRedirect(route('mypage:edit', ['post' => $storedPost->id]));
 
         $this->assertDatabaseHas(Post::class, $unpublishedPost->getAttributes());
         $this->assertSame($unpublishedPost->title, $storedPost->title);
@@ -139,5 +139,25 @@ class PostManageControllerTest extends TestCase
         );
         $response->assertRedirect(route('mypage:create'));
         $response->assertSessionHasErrors(['title' => 'max']);
+    }
+
+    /** @test */
+    public function ログイン中のユーザーが所有するPostの編集画面を開くことができる()
+    {
+        $post = Post::factory()->create(['user_id' => $this->user->id]);
+        $this->actingAs($this->user);
+
+        $response = $this->get(route('mypage:edit', ['post' => $post->id]));
+        $response->assertOK();
+    }
+
+    /** @test */
+    public function ログイン中のユーザー以外が所有するPostの編集画面は開けない()
+    {
+        $post = Post::factory()->create();
+        $this->actingAs($this->user);
+
+        $response = $this->get(route('mypage:edit', ['post' => $post->id]));
+        $response->assertForbidden();
     }
 }

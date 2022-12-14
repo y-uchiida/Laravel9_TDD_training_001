@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class PostManageController extends Controller
 {
@@ -29,6 +31,18 @@ class PostManageController extends Controller
             ...$request->post(),
             $request->boolean('is_published')
         ]);
-        return redirect()->route('mypage:edit', ['id' => $post->id]);
+        return redirect()->route('mypage:edit', ['post' => $post->id]);
+    }
+
+    public function edit(Post $post)
+    {
+        if (auth()->user()->isNot($post->user)) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
+
+        // old() に入力内容が保持されていればそれを使用し、そうでなければ$post を使用
+        $data = old() ? old() : $post;
+
+        return view('mypage.posts.edit', compact('data'));
     }
 }
